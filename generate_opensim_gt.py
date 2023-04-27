@@ -16,10 +16,11 @@ parent_dir = Path(__file__).absolute().parent
 
 # modelPath=str((parent_dir / "resources/opensim/BMLmovi/full_body.osim").as_posix())
 modelPath=str((parent_dir / "resources/opensim/BMLmovi/full_body.osim").as_posix())
-amassFolder=str((parent_dir / "resources/amass/").as_posix())
-v3dFolder = str((parent_dir / "resources/V3D/F/").as_posix())
+amassFolder=str((parent_dir / "resources/amass/SMPL_H_model_BMLmovi").as_posix())
+v3dFolder = str((parent_dir / "resources/V3D/F/F_Subjects_1_45").as_posix())
 
-videoFolder = str(Path("E:/Users/Marian/Projects/VideoJointAngle/Data/BMLTestVideo/").as_posix())
+# videoFolder = str(Path("E:/Users/Marian/Projects/VideoJointAngle/Data/BMLTestVideo/").as_posix())
+videoFolder = str(Path("gs://cloud-ai-platform-b9c6394b-6777-481a-a405-c92f72e6cd38/F_PG1").as_posix())
 
 outputFolder = str((parent_dir / "_dataset").as_posix())
 

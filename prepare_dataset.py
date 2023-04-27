@@ -15,14 +15,16 @@ import argparse
 
 parent_dir = Path(__file__).parent
 
-# modelPath=str((parent_dir / "resources/opensim/BMLmovi/full_body.osim").as_posix())
-modelPath=str((parent_dir / "resources/opensim/full_body_wo_hands.osim").as_posix())
+modelPath=str((parent_dir / "resources/opensim/BMLmovi/full_body.osim").as_posix())
+# modelPath=str((parent_dir / "resources/opensim/full_body_wo_hands.osim").as_posix())
 
 v3dFolder = str((parent_dir / "resources/V3D/F/").as_posix())
 
 outputFolder = str((parent_dir / "_dataset").as_posix())
 
-opensimGTFolder = str((parent_dir / "resources/opensim/BMLmovi/BMLmovi").as_posix())
+opensimGTFolder = str((parent_dir / "resources/opensim/BMLmovi/").as_posix())
+# opensimGTFolder = str((parent_dir / "resources/opensim/BMLmovi/BMLmovi").as_posix())
+
 
 
 if __name__ == "__main__":

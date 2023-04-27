@@ -218,7 +218,6 @@ class TrcGenerator:
             )
 
         else:
-
             TrcGenerator.write_motion_marker_trc_file(
                 outputPath, MarkerLocations, TrcGenerator.MotionMarkerIndexTable, dataRate, cameraRate, numFrames,
                 numMarkers, origDataRate, origDataStartFrame, origNumFrames
@@ -241,6 +240,7 @@ class TrcGenerator:
         convert = 1000
 
         with open(outputPath, "w") as f:
+            print("HELLO 1")
             f.write("PathFileType\t4\t(X/Y/Z)\n")
             f.write(
                 "DataRate\tCameraRate\tNumFrames\tNumMarkers\tUnits\tOrigDataRate\tOrigDataStartFrame\tOrigNumFrames\n")
@@ -261,15 +261,30 @@ class TrcGenerator:
             f.write(string)
 
             f.write("\n")
+            print(numFrames)
+            # print(motionMarkerIndexTable)
+            # SOMETHING GOES WRONG HERE
 
-            for i in range(1, numFrames + 1):
+            for i in range(1, 600 + 1):
+                if i%10==0:
+                    print(i)
 
                 string = "{}\t{:.4f}\t".format(i, (i - 1) * 1 / dataRate)
-
+                
+                
                 for _, index in motionMarkerIndexTable.items():
+                    
                     v = points[i - 1, index, :] * convert
                     string += "{:.6f}\t{:.6f}\t{:.6f}\t".format(v[0], v[1], v[2])
+                    
+                    if i == 610:
+                        print(f"het is zo lang{len(motionMarkerIndexTable.items())}")
+                        print(index)
+                        # print("Hiervast")
+                        
+                        
 
                 string = string[:-1]
                 string += "\n"
                 f.write(string)
+            print("HELLO 5")

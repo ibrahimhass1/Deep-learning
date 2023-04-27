@@ -35,24 +35,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()    
     
-    # cfg.freeze()
-    # print(cfg)
-
-    # torch.manual_seed(cfg.SEED)
-    # random.seed(cfg.SEED)
-    # np.random.seed(cfg.SEED)
-
-    # trainingProgram = Training(args, cfg)
-    # trainingProgram.run()
-    # trainingProgram.store_every_frame_prediction(train=True, valid=True, test=True)
-
-    cfg = get_temporal_cfg_defaults()
-    cfg.MODEL_FOLDER = str((cwd / r'checkpoints').as_posix())
-    cfg.BML_FOLDER = str((cwd / r'_dataset_full').as_posix()) + "/"
-    cfg.PASCAL_PATH = str((cwd / r'_dataset/pascal.hdf5').as_posix())
-    cfg.TRAINING.EPOCH = [1]
-    cfg.TRAINING.TRAINING_STEPS = 1
-
+    # CONVOLUTIONAL
     cfg.freeze()
     print(cfg)
 
@@ -60,7 +43,26 @@ if __name__ == "__main__":
     random.seed(cfg.SEED)
     np.random.seed(cfg.SEED)
 
-    trainingProgram = TemporalTraining(args, cfg)
+    trainingProgram = Training(args, cfg)
     trainingProgram.run()
     trainingProgram.store_every_frame_prediction(train=True, valid=True, test=True)
+
+    # TEMPORAL
+#     cfg = get_temporal_cfg_defaults()
+#     cfg.MODEL_FOLDER = str((cwd / r'checkpoints').as_posix())
+#     cfg.BML_FOLDER = str((cwd / r'_dataset_full').as_posix()) + "/"
+#     cfg.PASCAL_PATH = str((cwd / r'_dataset/pascal.hdf5').as_posix())
+#     cfg.TRAINING.EPOCH = [1]
+#     cfg.TRAINING.TRAINING_STEPS = 1
+
+#     cfg.freeze()
+#     print(cfg)
+
+#     torch.manual_seed(cfg.SEED)
+#     random.seed(cfg.SEED)
+#     np.random.seed(cfg.SEED)
+
+#     trainingProgram = TemporalTraining(args, cfg)
+#     trainingProgram.run()
+#     trainingProgram.store_every_frame_prediction(train=True, valid=True, test=True)
     

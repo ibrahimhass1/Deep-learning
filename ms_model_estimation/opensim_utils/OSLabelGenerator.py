@@ -16,6 +16,8 @@ import scipy.io
 from glob import glob
 from ms_model_estimation import Postscaling_LockedCoordinates, Postscaling_UnlockedConstraints, ChangingParentMarkers
 from ms_model_estimation.smplh_util.constants.scalingIKInf import IKTaskSet, scalingIKSet, scaleSet
+import shutil
+
 
 
 class AmassOpenSimGTGenerator:
@@ -91,10 +93,12 @@ class AmassOpenSimGTGenerator:
 
         videoName = bdataPath.split("/")[-1].split(".")[0]
         relativeFolder = "/".join(bdataPath.split("/")[:-1]) + "/"
+        print("hello", relativeFolder, self.amassFolder)
         relativeFolder = relativeFolder.replace(self.amassFolder, "")
         bdata = np.load(bdataPath)
         numFrames = int(bdata["poses"].shape[0])
-
+        
+        
         # construct folders
         # folder to save .mot motion files of ik results
         Path(self.outputFolder + relativeFolder + "IKResults").mkdir(parents=True, exist_ok=True)
@@ -102,6 +106,18 @@ class AmassOpenSimGTGenerator:
         Path(self.outputFolder + relativeFolder + "MotionTrcData").mkdir(parents=True, exist_ok=True)
         # folder to save .pkl ik results
         Path(self.outputFolder + relativeFolder + "Results").mkdir(parents=True, exist_ok=True)
+        
+       
+        ### Copy generate files
+        root = os.path.abspath(os.path.dirname(os.getcwd()))
+        
+        src = os.path.join(root, 'resources', 'opensim', 'BMLmovi', 'Geometry')
+        dest = os.path.join(root, 'resources', 'opensim', 'BMLmovi', relativeFolder)
+        
+        shutil.copytree(src, dest, dirs_exist_ok = True)
+        
+        ### Copy generate files
+        
 
         # body scaling setting
         height = SMPLHModel.get_height(bdata, gender=gender)
@@ -111,7 +127,8 @@ class AmassOpenSimGTGenerator:
         outputScaleFilePath = "Unassigned"
         outputMarkerFilePath = relativeFolder + "scale_simulate.trc"
         mass = SMPLHModel.get_assumed_body_weight(bdata, gender=gender)
-
+        
+        
         # if scale.osim exists, rescale?
         if not os.path.exists(self.outputFolder + outputModelFilePath) or self.reScale:
             TrcGenerator.generate_static_marker_trc_file_from_amass(
@@ -125,38 +142,49 @@ class AmassOpenSimGTGenerator:
                 outputModelFilePath, outputScaleFilePath,
                 outputMotionFilePath, outputMarkerFilePath, measurements=True
             )
-
+            
             # body scaling
             self.opensimModel.scaling()
-
+            
         # only conduct body scaling
         if self.scaleOnly:
             return
 
-
+        
         # ik setting
         outputIKXMLPath = self.outputFolder + relativeFolder + "IK_setUp.xml"
         markerFile = "MotionTrcData/" + videoName + ".trc"
         timeRange = SMPLHModel.get_time_range(bdata, 120)
+        
         outputMotionFilePath = "IKResults/" + videoName + ".mot"
-
+        
         # if motion trc file exists, re-IK?
+        print("before if")
         if not os.path.exists(self.outputFolder + relativeFolder + markerFile) or self.reIK:
+            print("in if")
             TrcGenerator.generate_motion_marker_trc_file_from_amass(
                 self.outputFolder + relativeFolder + markerFile, bdata,
                 gender=gender
             )
+        # OUR EDIT
+        # check if obj files exist
+        print("after if" + self.outputFolder + relativeFolder + "videoMuscle_1mc_l.obj")
+        # if not os.path.exists(self.outputFolder + relativeFolder + "videoMuscle_1mc_l.obj")
+        # # copy obj files
+        # shutil.copy(src, dst)
+        
         # Generate the ik .xml file
         self.opensimModel.generate_ik_setup_file(
             outputIKXMLPath, self.outputFolder + outputModelFilePath, markerFile, timeRange,
             outputMotionFilePath
         )
         # ik
+        
         self.opensimModel.inverseKinematics()
 
         # record all of simulation results in a .pkl file 
         Label = {"gender": gender}
-
+        
         # evaluate
         ikStoPath = self.outputFolder + relativeFolder + "_ik_model_marker_locations.sto"
         Label.update(self.evaluate_ik_result(ikStoPath, self.outputFolder + relativeFolder + markerFile, numFrames))
@@ -283,6 +311,8 @@ class AmassOpenSimGTGenerator:
 
         npzDataPathList = []
         files = glob(self.amassFolder + subDataSet + "/*/*.npz")
+        # files = glob(self.amassFolder + "/*/*.npz")
+        # print(files)
         # Search all .npz files
         for file in files:
             # two types of file names cause errors.
